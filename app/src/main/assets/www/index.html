@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dash BR Selector</title>
+<style>
+  :root{
+    --red:#D71920; --navy:#1F3864; --dark:#404040; --mid:#7F7F7F; --light:#EDEDED;
+    --bg:#F5F6F8; --text:#1d1d1f;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px}
+  header{background:var(--navy);color:#fff;padding:18px 18px 16px;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;
+    background:var(--red);transform:rotate(45deg)}
+  .brand{font-weight:900;letter-spacing:.18em;font-size:22px}
+  .brand b{color:var(--red)}
+  .sub{opacity:.8;font-size:13px;margin-top:2px}
+  main{padding:16px;max-width:640px;margin:0 auto}
+  .card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:16px;margin-bottom:14px}
+  label{display:block;font-size:13px;font-weight:700;color:var(--dark);margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
+  select{width:100%;font-size:17px;padding:13px 40px 13px 14px;border:2px solid var(--light);border-radius:10px;
+    background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%231F3864' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 14px center;
+    -webkit-appearance:none;appearance:none;color:var(--text)}
+  select:focus{outline:none;border-color:var(--navy)}
+  select:disabled{background-color:var(--light);color:var(--mid)}
+  .field+.field{margin-top:14px}
+  .empty{text-align:center;color:var(--mid);padding:28px 10px;font-size:15px}
+  .drive{display:flex;gap:14px;align-items:center}
+  .photo{width:92px;height:92px;border-radius:12px;background:var(--light);flex:none;display:flex;
+    align-items:center;justify-content:center;overflow:hidden}
+  .photo img{width:100%;height:100%;object-fit:contain}
+  .photo .ph{font-weight:900;color:var(--navy);font-size:13px;text-align:center;line-height:1.2;padding:6px}
+  .photo .ph span{display:block;width:26px;height:4px;background:var(--red);margin:6px auto 0}
+  .dname{font-size:20px;font-weight:800;color:var(--navy)}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .stat{background:var(--light);border-radius:10px;padding:10px 12px}
+  .stat .k{font-size:12px;color:var(--dark);font-weight:700;text-transform:uppercase}
+  .stat .v{font-size:22px;font-weight:800;color:var(--navy);margin-top:2px}
+  .stat .v small{font-size:14px;color:var(--mid);font-weight:700}
+  .br-h{display:flex;align-items:center;gap:10px;margin:-16px -16px 14px;padding:11px 16px;
+    border-radius:14px 14px 0 0;background:var(--dark);color:#fff;font-weight:800;font-size:15px}
+  .br-h .tag{background:var(--red);border-radius:6px;padding:2px 8px;font-size:12px}
+  .br-h.hi{background:var(--navy)}
+  .br-v{font-size:21px;font-weight:800;color:var(--text)}
+  .note{margin-top:8px;padding:9px 12px;border-left:4px solid var(--red);background:#FBEDEE;border-radius:0 8px 8px 0;font-size:15px}
+  .diagram{margin-top:12px;border:1px solid var(--light);border-radius:10px;padding:8px;background:#fff;text-align:center}
+  .diagram img,.diagram svg{max-width:100%;max-height:260px;height:auto;display:block;margin:0 auto}
+  .diagram .cap{font-size:12px;color:var(--mid);margin-top:4px}
+  footer{font-size:11.5px;color:var(--mid);text-align:center;padding:4px 16px 26px;line-height:1.6}
+  footer .rule{height:3px;background:var(--red);max-width:640px;margin:0 auto 10px;border-radius:2px}
+  #zoom{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:14px;z-index:9}
+  #zoom.on{display:flex}
+  #zoom>div{background:#fff;border-radius:12px;padding:10px;max-width:100%;max-height:100%;overflow:auto}
+  #zoom img,#zoom svg{max-width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">DASH <b>■</b></div>
+  <div class="sub">Braking Resistor (BR) Selector</div>
+</header>
+<main>
+  <div class="card">
+    <div class="field">
+      <label for="drive">Drive</label>
+      <select id="drive"><option value="">Choose a drive…</option></select>
+    </div>
+    <div class="field">
+      <label for="size">Drive size (kW)</label>
+      <select id="size" disabled><option value="">Choose a drive first</option></select>
+    </div>
+  </div>
+  <div id="out"><div class="card empty">Pick a drive and its size to see the braking resistor, wiring and notes.</div></div>
+</main>
+<footer>
+  <div class="rule"></div>
+  Riyadh HQ +966 92 0007 226 · Jeddah +966 12 6688 679 · Dammam +966 13 8344 613<br>www.dashcontrol.com
+</footer>
+<div id="zoom" onclick="this.classList.remove('on')"><div id="zoomIn"></div></div>
+
+<script src="data.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const driveSel = $('drive'), sizeSel = $('size'), out = $('out');
+
+DRIVES.forEach((d, i) => driveSel.add(new Option(d.name, i)));
+
+driveSel.onchange = () => {
+  sizeSel.innerHTML = '';
+  const d = DRIVES[driveSel.value];
+  if (!d) { sizeSel.add(new Option('Choose a drive first', '')); sizeSel.disabled = true; render(); return; }
+  sizeSel.disabled = false;
+  if (d.sizes.length > 1) sizeSel.add(new Option('Choose size…', ''));
+  d.sizes.forEach((s, i) => sizeSel.add(new Option(s.kw + ' kW', i)));
+  render();
+};
+sizeSel.onchange = render;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+/* Wiring drawings in the same style as the sheet's pictures, for cases the sheet has no picture of */
+function box(x, y, w, h, t) {
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff" stroke="#000" stroke-width="5"/>
+          <text x="${x + w / 2}" y="${y + h / 2 + 9}" text-anchor="middle" font-size="26" font-weight="700" font-family="Arial">${t}</text>`;
+}
+const term = (x, y, t, a) => `<text x="${x}" y="${y + 9}" text-anchor="${a}" font-size="26" font-weight="700" font-family="Arial">${t}</text>`;
+function drawSingle(ohm) {
+  return `<svg viewBox="0 0 700 140" xmlns="http://www.w3.org/2000/svg">
+    <path d="M100 70H220M480 70H600" stroke="#000" stroke-width="5"/>
+    ${box(220, 30, 260, 80, ohm + ' Ohm')}${term(90, 70, '( + )', 'end')}${term(610, 70, '( PB )', 'start')}</svg>`;
+}
+function drawPar2(ohm) {
+  return `<svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg">
+    <path d="M120 165H190M190 70V260M190 70H260M190 260H260M520 70H590M520 260H590M590 70V260M590 165H660" stroke="#000" stroke-width="5" fill="none"/>
+    ${box(260, 30, 260, 80, ohm + ' Ohm')}${box(260, 220, 260, 80, ohm + ' Ohm')}
+    ${term(110, 165, '( + )', 'end')}${term(670, 165, '( PB )', 'start')}</svg>`;
+}
+const PICS = ['par2-20-ser-10', 'par4-85', 'par2-60', 'ser2-10', 'ser2-40', 'ser2-60'];
+function diagram(key) {
+  let html;
+  if (PICS.includes(key)) html = `<img src="img/${key}.png" alt="Wiring diagram">`;
+  else if (key.startsWith('single-')) html = drawSingle(key.split('-')[1]);
+  else if (key.startsWith('par2-')) html = drawPar2(key.split('-')[1]);
+  else return '';
+  return `<div class="diagram" onclick="zoom(this)">${html}<div class="cap">Wiring between (+) and (PB) · tap to enlarge</div></div>`;
+}
+function zoom(el) {
+  $('zoomIn').innerHTML = el.firstElementChild.outerHTML;
+  $('zoom').classList.add('on');
+}
+
+function brCard(b, hi) {
+  return `<div class="card">
+    <div class="br-h ${hi ? 'hi' : ''}">${hi ? 'More than 7 floors' : '7 floors or less'}
+      <span class="tag">${hi ? 'or speed > 1 m/s' : 'or speed < 1 m/s'}</span></div>
+    <label>Braking resistor (BR)</label>
+    <div class="br-v">${esc(b.br)}</div>
+    ${b.note ? `<div class="note">${esc(b.note)}</div>` : ''}
+    ${diagram(b.diagram)}
+  </div>`;
+}
+
+function render() {
+  const d = DRIVES[driveSel.value], s = d && d.sizes[sizeSel.value];
+  if (!d || !s) {
+    out.innerHTML = `<div class="card empty">${d ? 'Now pick the size of the ' + esc(d.name) + '.' : 'Pick a drive and its size to see the braking resistor, wiring and notes.'}</div>`;
+    return;
+  }
+  out.innerHTML = `
+    <div class="card">
+      <div class="drive">
+        <div class="photo"><img src="img/drives/${slug(d.name)}.png" alt=""
+          onerror="this.parentNode.innerHTML='<div class=ph>${esc(d.name)}<span></span></div>'"></div>
+        <div><div class="dname">${esc(d.name)}</div><div style="color:var(--mid);font-weight:700">${s.kw} kW</div></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">Drive size</div><div class="v">${s.kw} <small>kW</small></div></div>
+        <div class="stat"><div class="k">Max output current</div><div class="v">${s.amps.toFixed(1)} <small>A</small></div></div>
+      </div>
+    </div>
+    ${brCard(s.low, false)}${brCard(s.high, true)}`;
+}
+</script>
+</body>
+</html>
